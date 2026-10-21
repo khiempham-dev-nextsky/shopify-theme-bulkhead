@@ -30,8 +30,9 @@ Hoàn thiện demo store, rồi chứng minh bằng số đo và bằng chứng 
 
 ## Requirements
 
-- **Demo store hoàn thiện:** nối metafield MPN, spec, downloads vào block bằng dynamic source; lưu các template riêng của demo store ở `demo-data/theme-overrides/` (ngoài gói theme). Mọi lần push lên demo store dùng `--ignore` cho `templates/*.json`, `config/settings_data.json`, `sections/*-group.json`, rồi áp lại overrides.
-- **Lighthouse mobile:** GitHub Action (`client_id`, `client_secret`, `password`, handle product và collection truyền tường minh, `pull_theme` trỏ tới một theme trên benchmark store đã cấu hình nội dung thật), action ghim theo full commit SHA, chỉ chạy `workflow_dispatch` và `push` lên `master`, `permissions: contents: read`.
+- **Demo store hoàn thiện:** nối metafield MPN, spec, downloads vào block bằng dynamic source; lưu các template riêng của demo store ở `demo-data/theme-overrides/` (ngoài gói theme). Mọi lần push lên demo store dùng `shopify theme push -e demo` với `--ignore` cho `templates/*.json`, `config/settings_data.json`, `sections/*-group.json`, rồi áp lại overrides.
+<!-- Updated: 2026-10-21 - app Lighthouse chỉ tạo khi nối GitHub remote; lệnh theme dùng environment -->
+- **Lighthouse mobile khi đã có GitHub remote:** GitHub Action (`client_id`, `client_secret`, `password`, handle product và collection truyền tường minh, `pull_theme` trỏ tới một theme trên benchmark store đã cấu hình nội dung thật), action ghim theo full commit SHA, chỉ chạy `workflow_dispatch` và `push` lên `master`, `permissions: contents: read`.
 - **Khi repo chưa có GitHub remote:** workflow vẫn nằm trong repo nhưng chưa chạy; `run.mjs` nhận `--form-factor mobile|desktop` và là cổng duy nhất cho cả hai thiết bị cho tới khi remote được nối. Khi đã có remote, cổng mobile là action.
 - **Lighthouse desktop:** `scripts/lighthouse/run.mjs` dùng `lighthouse` trong `devDependencies` (có lockfile); lấy cookie qua form `/password` rồi truyền bằng `--extra-headers`; báo lỗi nếu `finalUrl` hoặc `<title>` là trang password; chạy 5 lần mỗi URL, lấy median, tính trung bình ba trang; ghi `finalUrl` từng lần vào bằng chứng. Đo thêm `/collections/{handle}?view=table` ở 48 sản phẩm mỗi trang, ghi riêng.
 - Theme Check strict không có error; `check-package-json.mjs` sạch.
@@ -46,7 +47,8 @@ Hoàn thiện demo store, rồi chứng minh bằng số đo và bằng chứng 
 
 ## Architecture
 
-- `.github/workflows/lighthouse.yml` và `scripts/lighthouse/run.mjs` như mục Requirements; secrets do anh tạo ở phase 1.
+- `.github/workflows/lighthouse.yml` và `scripts/lighthouse/run.mjs` như mục Requirements. App Dev Dashboard và GitHub secrets chỉ tạo khi anh nối remote (xem phase 1); trước đó cổng duy nhất là `run.mjs` chạy local với `-e benchmark`.
+- Lệnh theme chọn store bằng environment trong `shopify.theme.toml`: `-e demo` (demo store), `-e benchmark` (đo Lighthouse), `-e feature` (parity và tính năng cần app).
 - `plans/261021-0812-bulkhead-preset-v1/reports/qa-evidence.md` ghi bằng chứng cho từng acceptance criterion; mọi bằng chứng đã che email, địa chỉ, số order, tên miền store và token.
 
 ## Related Code Files
@@ -95,7 +97,7 @@ Hoàn thiện demo store, rồi chứng minh bằng số đo và bằng chứng 
 
 ## Security Considerations
 
-- Secrets chỉ nằm trong GitHub Secrets; app Lighthouse chỉ có `read_products,write_themes` và chỉ cài trên benchmark store; script local đọc từ biến môi trường, không ghi ra file.
+- Khi có remote: secrets chỉ nằm trong GitHub Secrets; app Lighthouse chỉ có `read_products,write_themes` và chỉ cài trên benchmark store. Khi chạy local: script đọc mật khẩu storefront từ biến môi trường, không ghi ra file; `shopify.theme.toml` không được commit.
 - Bằng chứng QA đã che dữ liệu cá nhân và token trước khi commit.
 
 ## Next Steps

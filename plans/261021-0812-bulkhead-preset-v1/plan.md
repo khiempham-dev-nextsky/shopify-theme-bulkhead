@@ -48,7 +48,8 @@ Hướng thiết kế là "hai lớp": lớp chung chạy cho mọi khách (quic
 
 ## Dependencies
 
-- Phase 1 bị chặn bởi việc anh tạo Partner account và ba store, cấu hình B2B, app Lighthouse và GitHub secrets (checklist ở phase 1).
+- Phase 1 bị chặn bởi việc anh tạo Partner account và ba store, cấu hình B2B (checklist ở phase 1). App Lighthouse và GitHub secrets chỉ tạo khi anh nối GitHub remote, không chặn phase nào.
+- Mọi lệnh theme chọn store bằng environment trong `shopify.theme.toml` (gitignore): `demo`, `benchmark`, `feature`.
 - Thứ tự: 1 → {2, 8} song song → {3, 4, 5} → 6 → 7 → 9. Phần import của phase 8 phải xong trước khi phase 4 và 5 đóng; ảnh cuối của phase 8 phải xong trước phase 9.
 - Thực thi: sau khi phase 1 đóng, phase 8 chạy ở session và worktree riêng, song song với phase 2.
 - Phase 6 dùng `<bh-quantity>`, `price-tiers.js`, `addLines()` và product card từ phase 2, cùng kết quả prototype của phase 1.
@@ -135,5 +136,10 @@ Hướng thiết kế là "hai lớp": lớp chung chạy cho mọi khách (quic
 ### Whole-Plan Consistency Sweep (Validation)
 - Đã kiểm tra các chỗ nhắc Theme Support, GitHub Actions và lưu ảnh trên mọi phase; phase 1, 2, 9 đã cập nhật, phase 8 vốn đã commit ảnh `final/`.
 - Không còn mâu thuẫn chưa giải quyết.
+
+### Thay đổi sau validation — 2026-10-21
+- Theo yêu cầu của anh: dời bước tạo app Dev Dashboard và GitHub secrets cho Lighthouse sang lúc nối GitHub remote, vì khi chạy local `theme dev`/`theme push` dùng phiên đăng nhập Shopify CLI và import dùng `shopify store auth`; Shopify Dev MCP không đăng nhập store nên không thay được app này.
+- Thêm `shopify.theme.toml` (gitignore) với ba environment `demo`, `benchmark`, `feature`; mật khẩu storefront truyền bằng biến môi trường.
+- Đã cập nhật phase 1, phase 9 và mục Dependencies.
 
 <!-- slug: bulkhead-preset-v1 -->

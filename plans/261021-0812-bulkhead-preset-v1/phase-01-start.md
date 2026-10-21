@@ -35,8 +35,11 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 1. Tạo Partner account và vào Dev Dashboard.
 2. **Demo store:** tạo client transfer store, bật Plus khi tạo. Bật Bogus Gateway hoặc Shopify Payments test mode, tắt các phương thức checkout khác. Settings → Customer accounts: dùng customer accounts mới.
 3. Trên demo store: tạo company "Northgate Builders" (tên hư cấu), một location có địa chỉ giao hàng, một contact dùng email anh nhận được thư. Tạo catalog gán cho location. Sau khi phase 1 seed product (bước 4 bên dưới), đặt quantity rule (min, max, increment) và 2–3 bậc giá cho 3 variant do mình chỉ định, rồi ghi lại các giá trị đó vào một file ngoài repo để P-f so sánh.
-4. **Benchmark store:** tạo dev store, import CSV performance của Shopify (https://shopify.dev/csv/theme-performance-shop-product-data.csv). Tạo một app trong Dev Dashboard chỉ với scope `read_products,write_themes`, cài lên benchmark store. Tạo GitHub secrets `SHOP_STORE`, `SHOP_CLIENT_ID`, `SHOP_CLIENT_SECRET`, `SHOP_PASSWORD` (mật khẩu storefront).
+4. **Benchmark store:** tạo dev store, import CSV performance của Shopify (https://shopify.dev/csv/theme-performance-shop-product-data.csv). Không cài app nào lên store này.
 5. **Feature test store:** tạo một dev store thứ ba để test các tính năng cần app hoặc dữ liệu đặc biệt (selling plans với app subscription, CSV review của Shopify, file 3D mẫu) và để cài preset kiểm tra parity. Không cài app nào lên benchmark store.
+
+<!-- Updated: 2026-10-21 - app Lighthouse dời sang lúc nối GitHub remote; thêm shopify.theme.toml -->
+**Khi anh nối GitHub remote (không chặn phase nào):** tạo một app trong Dev Dashboard chỉ với scope `read_products,write_themes`, chỉ cài lên benchmark store; tạo GitHub secrets `SHOP_STORE`, `SHOP_CLIENT_ID`, `SHOP_CLIENT_SECRET`, `SHOP_PASSWORD` (mật khẩu storefront). App này chỉ phục vụ GitHub Action Lighthouse; khi chạy local thì không cần, vì `theme dev`/`theme push` dùng phiên đăng nhập Shopify CLI của anh và import dùng `shopify store auth`. Shopify Dev MCP không thay được app này vì nó không đăng nhập store.
 
 **Prototype phải trả lời:**
 - P-a: Predictive search có khớp chính xác SKU dạng `BH-4410-075`, `M8x1.25-50`, `00731`, `HX.200/12` không? Với khoảng 30 product dùng chung tiền tố (`BH-4410-*`), product đúng có luôn nằm trong top 10 không? Phương án `/search?q=sku1 OR sku2&type=product&section_id=` có tra nhiều SKU trong một request được không?
@@ -52,6 +55,7 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 
 ## Architecture
 
+- `shopify.theme.toml` khai báo ba environment `demo`, `benchmark`, `feature`, mỗi environment một `store`; mọi lệnh theme chọn store bằng `-e <environment>`. File này nằm trong `.gitignore` vì chứa tên miền store. Mật khẩu storefront không ghi vào file mà truyền bằng biến môi trường (`SHOPIFY_FLAG_STORE_PASSWORD` cho `theme dev`, `SHOP_PASSWORD` cho script Lighthouse).
 - Theme code đặt ở gốc repo theo cấu trúc Skeleton: `assets/`, `blocks/`, `config/`, `layout/`, `locales/`, `sections/`, `snippets/`, `templates/`.
 - Code prototype là code tạm: section `proto-*` gắn vào alternate template `page.proto-*.json`, bị xoá trước khi phase 1 đóng.
 - Dữ liệu seed: khoảng 30 product, handle bắt đầu bằng `proto-` và có tag `proto`, gồm SKU khó và một nhóm dùng chung tiền tố `BH-4410-*`. Tạo bằng chính đường import ở P-e (nếu P-e thất bại thì tạo tay).
@@ -59,15 +63,16 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 
 ## Related Code Files
 
-- Create (giữ lại): toàn bộ file Skeleton tại commit đã chọn, `LICENSE.md`, `.gitignore`, `.shopifyignore` (loại `plans/`, `docs/`, `scripts/`, `demo-data/`, `package.json`, `package-lock.json`).
+- Create (giữ lại): toàn bộ file Skeleton tại commit đã chọn, `LICENSE.md`, `.gitignore` (có `shopify.theme.toml`), `.shopifyignore` (loại `plans/`, `docs/`, `scripts/`, `demo-data/`, `package.json`, `package-lock.json`).
 - Delete: `.github/workflows/cla.yml`; rà mọi file khác trong `.github/` của Skeleton và chỉ giữ workflow Theme Check.
 - Create (tạm, xoá cuối phase): `sections/proto-sku-lookup.liquid`, `sections/proto-orders.liquid`, `sections/proto-collection-view.liquid`, `templates/page.proto-sku.json`, `templates/page.proto-orders.json`, `templates/collection.proto-table.json`, `assets/proto-harness.js`, `scripts/prototype/*.graphql`, `scripts/prototype/vars/*.json`.
+- Create (giữ lại, không commit): `shopify.theme.toml`.
 - Create (giữ lại): `plans/261021-0812-bulkhead-preset-v1/reports/prototype-results.md`.
 
 ## Implementation Steps
 
 1. Clone Skeleton vào thư mục tạm ngoài repo, chạy `git merge-base --is-ancestor a4f32d393b9eadf6c4403318ca39116832e5d1df origin/main` để chắc commit thuộc repo gốc, checkout bằng SHA đầy đủ, copy file (bỏ `.git`) vào repo. Commit đầu tiên ghi rõ SHA gốc. Chạy `shopify theme check` để có baseline.
-2. Chạy `shopify theme dev --store <demo-store>` để xác nhận theme lên được.
+2. Tạo `shopify.theme.toml` với ba environment theo tên miền anh báo, kiểm tra `git check-ignore shopify.theme.toml`. Chạy `shopify theme dev -e demo` để xác nhận theme lên được, và `shopify theme list -e benchmark`, `shopify theme list -e feature` để xác nhận CLI truy cập được cả ba store.
 3. P-e: `shopify store auth` một lần với đủ scope cho phase 8: `write_products,write_files,write_inventory,read_locations,write_publications,write_content,write_online_store_navigation,write_metaobject_definitions` và scope cho company và catalog B2B (chốt tên scope chính xác bằng tài liệu khi chạy). Chạy chuỗi import cho 1 product, chạy lại lần hai, rồi seed nốt khoảng 30 product.
 4. Anh cấu hình quantity rule và bậc giá cho 3 variant đã chỉ định (checklist bước 3).
 5. P-a, P-d, P-g: dựng `proto-sku-lookup` có ô nhập và nút chạy loạt test; harness ghi thời gian, vị trí của product đúng trong kết quả, mọi mã 429 và `Retry-After`.
@@ -81,8 +86,9 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 
 ## Todo
 
-- [ ] Anh hoàn tất checklist ba store, B2B, app Lighthouse và GitHub secrets
+- [ ] Anh hoàn tất checklist ba store và B2B
 - [ ] Import Skeleton tại commit đã xác minh, dọn `.github/`, thêm `.shopifyignore`
+- [ ] `shopify.theme.toml` với ba environment, đã gitignore, CLI truy cập được cả ba store
 - [ ] P-e: chuỗi import đầy đủ, idempotent, ghi thông tin token
 - [ ] Seed khoảng 30 product `proto-`
 - [ ] P-a, P-d, P-g: tra SKU, rate limit, MPN
@@ -118,7 +124,7 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 ## Security Considerations
 
 - Token của `store auth` không ghi vào repo hay log; P-e ghi lại nơi CLI lưu token để thu hồi ở cuối phase 8.
-- Không commit `.env`, mật khẩu, email, địa chỉ, số order hay cart token; bằng chứng phải được che trước khi lưu.
+- Không commit `.env`, `shopify.theme.toml`, mật khẩu, email, địa chỉ, số order hay cart token; bằng chứng phải được che trước khi lưu.
 
 ## Next Steps
 
