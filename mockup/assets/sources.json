@@ -1,0 +1,76 @@
+{
+  "status": "provisional",
+  "note": "All seven images are AI-generated (not stock, not photographs of real products or real warehouses). They are provisional mockup imagery only and must be replaced with real catalog photography or approved renders before launch. Products depict generic, unbranded items and do not represent any real SKU, supplier, or brand.",
+  "generator": {
+    "tool": "Codex CLI 0.164.0 (`codex exec`) built-in image_generation feature",
+    "auth": "existing ChatGPT login; no API key, no paid credits switch",
+    "method": "Each image generated in an isolated temp working dir (/tmp/bh-gen/<name>) with an explicit instruction to use the built-in image generation tool (not code/SVG/canvas). Generator-side model name and seed are not exposed by the CLI and were not recorded.",
+    "generated_on": "2026-10-23",
+    "license_note": "AI-generated output obtained under the user's ChatGPT account terms; no third-party stock or scraped images are used. Confirm OpenAI usage terms permit intended commercial use before production."
+  },
+  "post_processing": "ImageMagick: resized (hero 1600x900, others 1200x900), metadata stripped, progressive JPEG (quality 78-80). No other edits.",
+  "known_limitations": [
+    "Packshot backgrounds are close to but not exactly #ECEAE4; measured corner sample of fasteners.jpg is about #E5E2DD due to soft vignette/lighting.",
+    "electrical.jpg shows a UK-style (BS 1363) socket faceplate, which is region-specific.",
+    "Generated imagery may contain minor physical-detail inaccuracies (thread forms, fittings geometry); do not use as technical reference.",
+    "hero.jpg is a synthetic warehouse/workbench scene, not an authentic documentary photograph."
+  ],
+  "assets": [
+    {
+      "file": "hero.jpg",
+      "dimensions": "1599x900",
+      "type": "ai-generated-photorealistic",
+      "subject": "Cool-toned trade warehouse: steel workbench with tool mat, parts bins (yellow accent) and steel shelving behind",
+      "prompt_summary": "Cool-toned authentic working trade supply warehouse workbench scene, blue-steel daylight, shallow depth of field, no people, no text/logos, 16:9",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "fasteners.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "Pile of generic zinc-plated hex bolts and Phillips countersunk wood screws",
+      "prompt_summary": "Unbranded zinc hex bolts and steel wood screws on seamless flat #ECEAE4 background, soft diffused light, no text/logos, 4:3",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "tools.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "Claw hammer, adjustable wrench, combination pliers, tape measure (yellow/black grips)",
+      "prompt_summary": "Generic hand tools laid flat on seamless #ECEAE4 background, no text/logos, 4:3",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "electrical.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "White single socket faceplate (UK style), coil of bare copper cable, lever connector and 3-way terminal block",
+      "prompt_summary": "Generic modular electrical socket faceplate with copper cable and connector blocks on seamless #ECEAE4 background, no text/logos, 4:3",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "plumbing.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "Brass compression elbow, compression tee, male threaded nipple, lever ball valve",
+      "prompt_summary": "Generic brass plumbing fittings on seamless #ECEAE4 background, no text/logos, 4:3",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "safety.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "Yellow hard hat, clear safety glasses, grey coated work gloves, hi-vis vest",
+      "prompt_summary": "Generic industrial safety equipment on seamless #ECEAE4 background, no text/logos, 4:3",
+      "text_or_brands_visible": "none intended or observed on review"
+    },
+    {
+      "file": "adhesives.jpg",
+      "dimensions": "1200x900",
+      "type": "ai-generated-photorealistic-packshot",
+      "subject": "Two plain white caulk/sealant cartridges with grey nozzles and one plain white adhesive tube",
+      "prompt_summary": "Plain, completely unlabeled generic sealant cartridges and adhesive tube on seamless #ECEAE4 background, 4:3",
+      "text_or_brands_visible": "none; products intentionally unlabeled"
+    }
+  ]
+}

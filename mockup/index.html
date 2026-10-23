@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#234157" />
+    <meta
+      name="description"
+      content="Bulkhead industrial catalog. Independent HTML design preview, not a live store."
+    />
+    <title>Bulkhead | Built for the working day</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="assets/fonts/ibm-plex-sans-400.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/archivo-800.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.mjs"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="review-bar">
+      <div class="container review-inner">
+        <span
+          ><strong>Design preview</strong
+          ><span class="review-detail">
+            · Sample catalog & pricing · No live orders</span
+          ></span
+        >
+        <div class="review-controls">
+          <label for="density">Density</label
+          ><select id="density">
+            <option value="comfortable">Comfortable</option>
+            <option value="compact">Compact</option></select
+          ><button id="mode-toggle" aria-pressed="false">
+            View as trade buyer
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="announcement">
+      <div class="container">
+        <span>Ready for the next job. Built around your working day.</span
+        ><a href="#trade"
+          >Explore trade accounts <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-main">
+        <button
+          class="icon-button menu-button"
+          id="menu-toggle"
+          aria-label="Open navigation"
+          aria-expanded="false"
+        >
+          <span data-icon="menu"></span>
+        </button>
+        <a class="wordmark" href="#home" aria-label="Bulkhead home"
+          ><span class="brand-symbol" aria-hidden="true">B</span>bulkhead<span
+            class="wordmark-stop"
+            >.</span
+          ></a
+        >
+        <form class="search-form" id="header-search" role="search">
+          <label class="sr-only" for="search-scope">Search category</label
+          ><select id="search-scope">
+            <option value="">All products</option>
+            <option value="fasteners">Fasteners</option>
+            <option value="tools">Hand tools</option>
+            <option value="electrical">Electrical</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="safety">Safety & PPE</option>
+            <option value="adhesives">Adhesives</option>
+          </select>
+          <label class="sr-only" for="search-input"
+            >Search products, SKU or MPN</label
+          ><input
+            id="search-input"
+            type="search"
+            placeholder="Search products, SKU or MPN…"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="search-results"
+          /><button class="search-submit" aria-label="Search">
+            <span data-icon="search"></span>
+          </button>
+          <div
+            id="search-results"
+            class="search-results"
+            role="listbox"
+            hidden
+          ></div>
+        </form>
+        <a class="header-action desktop-action" href="#quick-order"
+          ><span data-icon="list"></span><span>Quick order</span></a
+        >
+        <a class="header-action account-link" href="#trade"
+          ><span data-icon="user"></span><span>Trade account</span></a
+        >
+        <button
+          class="header-action cart-button"
+          id="cart-open"
+          aria-label="Open cart, 0 items"
+        >
+          <span data-icon="bag"></span><span class="desktop-label">Cart</span
+          ><span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+      <nav class="navigation" aria-label="Main navigation">
+        <div class="container nav-inner">
+          <div class="nav-links">
+            <button
+              class="departments-button"
+              id="departments-toggle"
+              aria-expanded="false"
+              aria-controls="departments"
+            >
+              <span data-icon="grid"></span>Shop all departments<span
+                data-icon="chevron-down"
+              ></span></button
+            ><a href="#collection?category=fasteners">Fasteners & fixings</a
+            ><a href="#collection?category=tools">Tools & equipment</a
+            ><a href="#collection?category=safety">Safety & workwear</a
+            ><a href="#guides">Guides & resources</a>
+          </div>
+          <span class="ship-to" id="ship-to" hidden
+            ><span data-icon="pin"></span> Ship to: Northgate · Main yard</span
+          ><a class="nav-trade" href="#trade"
+            >Made for the trade <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </nav>
+      <div class="departments container" id="departments" hidden></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-top">
+          <div>
+            <a class="wordmark" href="#home"
+              ><span class="brand-symbol" aria-hidden="true">B</span
+              >bulkhead.</a
+            >
+            <p>
+              Good tools. The right materials.<br />One less thing to think
+              about.
+            </p>
+          </div>
+          <div>
+            <h3>Shop</h3>
+            <a href="#collection">All products</a
+            ><a href="#collection?category=fasteners">Fasteners & fixings</a
+            ><a href="#collection?category=tools">Tools & equipment</a
+            ><a href="#quick-order">Quick order</a>
+          </div>
+          <div>
+            <h3>Trade & support</h3>
+            <a href="#trade">Open a trade account</a
+            ><button data-info="Delivery & collection">
+              Delivery & collection</button
+            ><button data-info="Returns">Returns</button
+            ><button data-info="Contact us">Contact us</button>
+          </div>
+          <div>
+            <h3>Resources</h3>
+            <a href="#guides">Guides & resources</a
+            ><button data-info="About Bulkhead">About Bulkhead</button
+            ><button data-info="Privacy">Privacy</button
+            ><button data-info="Trade terms">Trade terms</button>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© Bulkhead. Independent design preview.</span
+          ><span>United States · English · USD</span
+          ><span>Sample data. No payment processing.</span>
+        </div>
+      </div>
+    </footer>
+    <dialog id="cart-dialog" class="drawer" aria-labelledby="cart-title">
+      <div class="drawer-heading">
+        <div>
+          <span class="eyebrow">Your order</span>
+          <h2 id="cart-title">Cart <span id="drawer-count"></span></h2>
+        </div>
+        <button class="icon-button" data-close aria-label="Close cart">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div id="cart-content"></div>
+    </dialog>
+    <dialog
+      id="filter-dialog"
+      class="drawer filter-drawer"
+      aria-labelledby="filter-title"
+    >
+      <div class="drawer-heading">
+        <h2 id="filter-title">Filter products</h2>
+        <button class="icon-button" data-close aria-label="Close filters">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div id="mobile-filters"></div>
+      <button class="button primary" id="apply-filters">Show results</button>
+    </dialog>
+    <dialog id="info-dialog" class="info-dialog" aria-labelledby="info-title">
+      <div class="drawer-heading">
+        <h2 id="info-title"></h2>
+        <button class="icon-button" data-close aria-label="Close information">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div id="info-content"></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <noscript
+      ><div class="noscript-note">
+        This interactive design preview needs JavaScript. Enable JavaScript to
+        browse the sample catalog and review the order flow.
+      </div></noscript
+    >
+  </body>
+</html>
