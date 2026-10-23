@@ -8,6 +8,7 @@ dependencies: []
 ---
 
 <!-- Updated: Red Team 2026-10-21 -->
+<!-- Updated: Scope revision 2026-10-23 - phase 0 độc lập và gate reconcile -->
 
 # Phase 1: Môi trường và prototype rủi ro
 
@@ -20,6 +21,7 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 - [Contract](../reports/brainstorm-261021-1421-bulkhead-preset-contract.md), mục Constraints và Rủi ro còn mở.
 - [Research Skeleton và tooling](../reports/researcher-261021-1503-skeleton-theme-store-tooling.md), mục 1, 3, 5 và 6.
 - [Research dữ liệu demo](../reports/researcher-261021-1503-demo-data-image-pipeline.md), mục 3, 4 và 5.
+- [Phase 0](./phase-00-design-and-section-inventory.md) và [section inventory](./section-inventory.md): G0 không thay thế P-a…P-j; phase này không phải chờ duyệt thiết kế để bắt đầu prototype.
 
 ## Key Insights
 
@@ -51,7 +53,8 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 - P-g: MPN tìm được qua kênh nào: tag dạng `mpn:XYZ`, đoạn trong `body`, hay `shopify--discovery--product_search_boost.queries`? Thử cả predictive search và `/search`.
 - P-h: Metafield danh mục chuẩn của Shopify (`shopify.*`, theo Standard Product Taxonomy) cho các danh mục ngũ kim có đủ thuộc tính để làm 2–3 cột spec trong Table view không? Đọc được trong vòng lặp product của collection không?
 - P-i: Không cài app Search & Discovery thì `collection.filters` có filter availability và price không? App này có cài sẵn trên client transfer store không? Complementary products có dữ liệu khi không cấu hình app không?
-- P-j: Alternate template `?view=table` có giữ được view khi chuyển trang, khi submit form filter và khi gọi Section Rendering (`section_id`) không?
+- P-j: Alternate templates có giữ view khi chuyển trang, submit filter/sort và gọi Section Rendering không? Phủ cả Grid/List/Table tường minh và hai default Grid/Table; đặc biệt chọn Grid được khi default là Table. Dùng alternate template tạm `proto-grid`, `proto-list`, `proto-table` cho prototype; phase 4 chỉ áp cơ chế đã xác nhận sang `?view=grid|list|table`.
+- Khi G0 và P-a…P-j đều có kết quả, đối chiếu D01–D05 với hành vi Shopify thực tế trước phase 2/8; ghi phần bị ảnh hưởng và quyết định duyệt lại vào design approval. Chưa có câu trả lời spec/downloads thì giữ gate Theme Support hoặc quyết định đi tiếp của anh như cũ.
 
 ## Architecture
 
@@ -63,22 +66,24 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 
 ## Related Code Files
 
-- Create (giữ lại): toàn bộ file Skeleton tại commit đã chọn, `LICENSE.md`, `.gitignore` (có `shopify.theme.toml`), `.shopifyignore` (loại `plans/`, `docs/`, `scripts/`, `demo-data/`, `package.json`, `package-lock.json`).
+- Create (giữ lại): toàn bộ file Skeleton tại commit đã chọn, `LICENSE.md`, `.gitignore` (có `shopify.theme.toml`), `.shopifyignore` (loại `mockup/`, `plans/`, `docs/`, `scripts/`, `demo-data/`, `package.json`, `package-lock.json`). Không copy hash routing, hardcoded fixture/rules hoặc preview controls từ mockup vào theme.
+- Phase này sở hữu root ignore rules trước khi tách session phase 2/8: `.gitignore` loại `demo-data/images/raw/`, `demo-data/generated/vars/`, `demo-data/generated/import-state.json` và credentials; vẫn cho phép commit ảnh `final/` đã duyệt. Phase 8 chỉ xác minh, không sửa root ignore files trong khi chạy song song.
 - Delete: `.github/workflows/cla.yml`; rà mọi file khác trong `.github/` của Skeleton và chỉ giữ workflow Theme Check.
-- Create (tạm, xoá cuối phase): `sections/proto-sku-lookup.liquid`, `sections/proto-orders.liquid`, `sections/proto-collection-view.liquid`, `templates/page.proto-sku.json`, `templates/page.proto-orders.json`, `templates/collection.proto-table.json`, `assets/proto-harness.js`, `scripts/prototype/*.graphql`, `scripts/prototype/vars/*.json`.
+- Create (tạm, xoá cuối phase): `sections/proto-sku-lookup.liquid`, `sections/proto-orders.liquid`, `sections/proto-collection-view.liquid`, `templates/page.proto-sku.json`, `templates/page.proto-orders.json`, `templates/collection.proto-grid.json`, `templates/collection.proto-list.json`, `templates/collection.proto-table.json`, `assets/proto-harness.js`, `scripts/prototype/*.graphql`, `scripts/prototype/vars/*.json`.
 - Create (giữ lại, không commit): `shopify.theme.toml`.
 - Create (giữ lại): `plans/261021-0812-bulkhead-preset-v1/reports/prototype-results.md`.
 
 ## Implementation Steps
 
 1. Clone Skeleton vào thư mục tạm ngoài repo, chạy `git merge-base --is-ancestor a4f32d393b9eadf6c4403318ca39116832e5d1df origin/main` để chắc commit thuộc repo gốc, checkout bằng SHA đầy đủ, copy file (bỏ `.git`) vào repo. Commit đầu tiên ghi rõ SHA gốc. Chạy `shopify theme check` để có baseline.
+   Hoàn thiện `.gitignore`/`.shopifyignore` theo Related Code Files trước khi bàn giao phase 2/8; kiểm tra exclusions và whitelist ảnh final không vô tình loại dữ liệu cần tái sinh.
 2. Tạo `shopify.theme.toml` với ba environment theo tên miền anh báo, kiểm tra `git check-ignore shopify.theme.toml`. Chạy `shopify theme dev -e demo` để xác nhận theme lên được, và `shopify theme list -e benchmark`, `shopify theme list -e feature` để xác nhận CLI truy cập được cả ba store.
 3. P-e: `shopify store auth` một lần với đủ scope cho phase 8: `write_products,write_files,write_inventory,read_locations,write_publications,write_content,write_online_store_navigation,write_metaobject_definitions` và scope cho company và catalog B2B (chốt tên scope chính xác bằng tài liệu khi chạy). Chạy chuỗi import cho 1 product, chạy lại lần hai, rồi seed nốt khoảng 30 product.
 4. Anh cấu hình quantity rule và bậc giá cho 3 variant đã chỉ định (checklist bước 3).
 5. P-a, P-d, P-g: dựng `proto-sku-lookup` có ô nhập và nút chạy loạt test; harness ghi thời gian, vị trí của product đúng trong kết quả, mọi mã 429 và `Retry-After`.
 6. P-c: trong cùng harness, chạy 5 ca và ghi status, body và `/cart.js` sau mỗi ca (đã lọc `token`).
 7. P-b, P-f: dựng `proto-orders` in riêng `orders_count`, `orders.size`, `last_order`, `customer.b2b?`, `current_location`, `quantity_price_breaks` và `quantity_rule` của 3 variant; xem ở trạng thái đăng nhập B2B và chưa đăng nhập.
-8. P-h, P-i, P-j: dựng `proto-collection-view` và template `collection.proto-table.json`; gán category cho vài product seed và thử đọc metafield `shopify.*`; kiểm tra filter và view qua phân trang, form, Section Rendering.
+8. P-h, P-i, P-j: dựng `proto-collection-view` và ba alternate template tạm `collection.proto-grid/list/table.json` (ba file đã liệt kê ở Related Code Files); gán category cho seed và thử metafield `shopify.*`; kiểm tra hai default và override ba view qua phân trang, filter/sort, Section Rendering. Ghi kết quả, chưa coi cơ chế cuối `?view=grid|list|table` là đã đạt khi prototype còn pending.
 <!-- Updated: Validation Session 1 - gửi câu hỏi parity cho Theme Support ngay sau P-h -->
 9. Ngay sau P-h: soạn câu hỏi cho Theme Support về preset parity khi preset để trống custom metafield (và setting `namespace.key` nếu P-h không đạt). Mình soạn nội dung, **anh gửi** từ Partner account. Phase 4 và 5 không chốt thiết kế spec/downloads khi chưa có trả lời hoặc chưa được anh quyết định đi tiếp.
 10. Ghi `reports/prototype-results.md`: mỗi câu P-a…P-j có kết quả, bằng chứng đã che dữ liệu, và quyết định cho phase sau.
@@ -87,7 +92,7 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 ## Todo
 
 - [ ] Anh hoàn tất checklist ba store và B2B
-- [ ] Import Skeleton tại commit đã xác minh, dọn `.github/`, thêm `.shopifyignore`
+- [ ] Import Skeleton tại commit đã xác minh, dọn `.github/`, hoàn thiện ignore rules và quyền sở hữu trước khi tách phase 2/8
 - [ ] `shopify.theme.toml` với ba environment, đã gitignore, CLI truy cập được cả ba store
 - [ ] P-e: chuỗi import đầy đủ, idempotent, ghi thông tin token
 - [ ] Seed khoảng 30 product `proto-`
@@ -98,6 +103,7 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 - [ ] Soạn câu hỏi parity cho Theme Support, anh gửi
 - [ ] Viết `prototype-results.md` với quyết định
 - [ ] Dọn code và dữ liệu prototype trên repo và demo store
+- [ ] Đối chiếu P-a…P-j với G0 khi cả hai sẵn sàng, ghi delta/reapproval trước phase 2/8; không coi fixture là platform proof
 
 ## Success Criteria
 
@@ -128,4 +134,4 @@ Dựng repo từ Skeleton, chuẩn bị đủ ba store, và trả lời bằng d
 
 ## Next Steps
 
-Phase 2 và phase 8 bắt đầu sau khi bảng quyết định được chốt; hai phase này chạy song song.
+Phase 0 có thể làm độc lập trong lúc chuẩn bị store. Phase 2 và phase 8 chỉ bắt đầu sau khi cả G0 lẫn bảng quyết định phase 1 được chốt và thiết kế bị ảnh hưởng đã được reconcile; hai phase này chạy song song như quyết định cũ. Các phase 4/5 vẫn chịu gate spec/downloads/Theme Support.

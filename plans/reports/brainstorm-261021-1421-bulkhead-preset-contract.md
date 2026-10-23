@@ -1,12 +1,13 @@
 # Brainstorm contract: theme Bulkhead, preset Bulkhead (Hardware, Lots 500+)
 
-Ngày: 21/10/2026. Nguồn đầu vào: `/Volumes/Projects/Downloads/shopify-theme-store-research.md` (gọi tắt là "file nghiên cứu"). Repo `shopify-theme-bulkhead` hiện trống, chưa có commit.
+Ngày chốt gốc: 21/10/2026; revision design/section scope: 23/10/2026. Nguồn đầu vào: `/Volumes/Projects/Downloads/shopify-theme-store-research.md` (gọi tắt là "file nghiên cứu"). Repo trống ở thời điểm chốt gốc; hiện đã có mockup HTML độc lập, chưa phải theme Shopify.
 
 ## Quyết định đã chốt
 
 - Theme tên **Bulkhead**, bản v1.0 ra mắt với **đúng 1 preset là Bulkhead**. Industry: Hardware. Catalog size: Lots (500+).
 - Lý do bắt buộc: Theme Store yêu cầu một preset mang đúng tên theme, và tên không đổi được sau khi upload (file nghiên cứu, mục 1.4 và 1.5).
 - Foolscap và Furrow sẽ thêm sau, qua các bản update.
+- Revision 23/10: bổ sung khả năng merchant xây trang, không mở thêm ngành/preset hoặc app-like feature. Authority thiết kế là [section inventory](../261021-0812-bulkhead-preset-v1/section-inventory.md), D01–D05 và R01–R03; yêu cầu mới ở đây ưu tiên hơn thứ tự homepage/design trong nghiên cứu cũ.
 
 ## Outcome
 
@@ -18,6 +19,7 @@ Merchant mục tiêu là cửa hàng bán ngũ kim, dụng cụ và vật tư ch
 - đặt nhanh nhiều mã cùng lúc;
 - xem được tồn kho thật và thông số kỹ thuật;
 - nếu là khách B2B: thấy giá theo bậc, quy tắc số lượng và địa chỉ giao hàng của công ty mình.
+- Merchant tự dựng homepage, landing ngành nghề và About/dịch vụ bằng section/blocks/settings trong theme editor, không sửa code, không dùng Custom Liquid hoặc app/page builder để lấp chỗ thiếu của thư viện.
 
 ## Constraints
 
@@ -50,6 +52,11 @@ Merchant mục tiêu là cửa hàng bán ngũ kim, dụng cụ và vật tư ch
 **Design** (file nghiên cứu, mục 6.5):
 - Bảng màu, font (Archivo, IBM Plex Sans, IBM Plex Mono), thang spacing, radius 2/4px.
 - Setting "Density" có hai mức: Comfortable và Compact.
+- Duyệt sớm trong [phase 0](../261021-0812-bulkhead-preset-v1/phase-00-design-and-section-inventory.md): hero Search first/Image led/Compact banner; card Browsing/Technical; collection Browsing/Order first; PDP Simple/Multi-size; content layouts có responsive/empty/long-content behavior. Các lựa chọn là cấu hình hoặc section preset, không phải theme preset mới.
+- Core S01–S19 trong inventory: thêm Image with text và Multicolumn; flexible banner cùng implementation `hero-banner.liquid`; CTA dùng `call-to-action.liquid` với preset Trade/Services; FAQ chỉ một `collapsible-content.liquid` dùng Product/Home/About/landing. Không tạo file riêng theo trang hoặc alias cho tên file dự kiến cũ.
+- Standalone video section O01 và featured collections tabs O02 là **optional extensions ngoài baseline v1**: chưa code, chưa quảng cáo, chưa tính effort/acceptance; thêm phải có anh duyệt scope và estimate. Video/3D gallery PDP và Grid/List/Table vẫn là core.
+- G0 approval thiết kế có thể làm độc lập với phase 1 chuẩn bị store/prototype. Trước phase 2/8 cần cả G0 và kết quả phase 1, reconcile và duyệt lại phần bị ảnh hưởng. G0 không thay thế bằng chứng platform hoặc gate Theme Support.
+- Các section hệ thống `main-*`, lookup endpoint, header/footer groups và block host không được tính như section nội dung để tăng số lượng quảng bá. Thư viện đánh giá bằng khả năng merchant xây trang và trải nghiệm mua vật tư, không bằng quota section.
 
 ## Phương án (cách xử lý tính năng B2B khi khách không phải B2B)
 
@@ -67,7 +74,7 @@ Merchant mục tiêu là cửa hàng bán ngũ kim, dụng cụ và vật tư ch
 - Lớp B2B vẫn phải được demo bằng tài khoản B2B mẫu trên dev store, cùng ảnh chụp và video trên listing. Mọi khẳng định trên listing phải khớp với những gì merchant nhận được khi cài preset.
 
 ### Better approaches
-File nghiên cứu ngầm định bảng volume pricing là tính năng chữ ký hiện trên mọi PDP. Kiểm chứng cho thấy nó phụ thuộc vào ngữ cảnh B2B, nên phương án B là cách tốt hơn: các tính năng **không** phụ thuộc B2B mới là trục định vị chính. Chi phí đổi hướng thấp, vì repo chưa có code.
+File nghiên cứu ngầm định bảng volume pricing là tính năng chữ ký hiện trên mọi PDP. Kiểm chứng cho thấy nó phụ thuộc vào ngữ cảnh B2B, nên phương án B giữ các tính năng **không** phụ thuộc B2B làm trục định vị chính. Revision này giữ quyết định đó; không dùng dữ liệu B2B mẫu của mockup làm feature hoạt động trên Shopify.
 
 ## Non-goals (không làm trong đợt này)
 
@@ -77,15 +84,20 @@ File nghiên cứu ngầm định bảng volume pricing là tính năng chữ k�
 - Template tài khoản khách hàng kiểu legacy.
 - Các thao tác thuộc về anh: nộp theme, tạo tài khoản, viết listing và chạy quảng cáo.
 - Bán theme ở bất kỳ marketplace nào khác.
+- Optional O01/O02 chưa thuộc baseline; không thêm wishlist, compare, countdown, social feed hoặc chức năng ngoài việc tìm/chọn/đặt vật tư để làm danh sách tính năng dài hơn.
+- Lượt cập nhật plan 23/10 không sửa mockup hoặc triển khai theme/store. Công việc design/implementation trong các phase vẫn pending cho đến khi có bằng chứng thực thi.
 
 ## Phạm vi sản phẩm (cụ thể hoá mục 6.3 và 6.4 của file nghiên cứu)
 
-- **Homepage**, theo thứ tự section ở mục 6.3: announcement bar, header có ô search hỗ trợ SKU/MPN, hero search-first, trust bar, shop by category, **quick order pad**, featured collection, trade account CTA, logo list, blog, newsletter, footer.
+- **Homepage**, default order mới: announcement/header có search SKU/MPN → hero Search first → trust bar → **quick order pad** → shop by category → featured collection → CTA chung preset Trade → logo list → blog → newsletter → footer. Quick order đứng trước category trên cả desktop/mobile, DOM/focus order theo thứ tự hiển thị; merchant vẫn được thêm/bỏ/reorder bằng editor.
 - **Product page**: breadcrumbs, gallery có rich media, buy box dựng bằng block (SKU, MPN, unit price, **bảng bậc giá B2B**, **quantity rule**, tồn kho thật, pickup, accelerated checkout), **bulk variant matrix**, **bảng spec** và **downloads** lấy từ metafield kiểu `url`, complementary và related products, FAQ.
 - **Collection page**: chuyển đổi **Grid / List / Table**, faceted filter (drawer trên mobile), bộ lọc "In stock only", pagination.
 - **Trang Quick order** (`page.quick-order`): dán nhiều dòng `SKU, số lượng`, kiểm tra tồn kho và quantity rule **trước** khi thêm vào cart.
 - **Cart**: tôn trọng `quantity_rule` và hiện bậc giá đang áp dụng.
 - **Reorder:** nếu prototype xác nhận `customer.orders` có dữ liệu với new customer accounts thì làm nút "Order again" bằng Liquid. Nếu không thì chỉ link sang trang orders của customer account.
+- **Thư viện xây trang:** [inventory](../261021-0812-bulkhead-preset-v1/section-inventory.md) chỉ rõ mục đích, template hỗ trợ, layout, blocks/settings, responsive/empty state và phase owner từng core section. About và landing ngành nghề dùng module chung, không section riêng cho từng ngành.
+- **Cấu hình catalog:** merchant có thể chọn default Grid hoặc Table, khách vẫn chuyển Grid/List/Table; giá, spec, stock và quantity/cart logic dùng chung. Product đơn giản không bị ép matrix; multi-size có picker + matrix/list theo option thực tế.
+- **Bài merchant:** R01 homepage, R02 `page.trade-landing.json`, R03 `page.about.json`; trade application `page.trade-account.json` là luồng contact/native riêng, không nhầm với landing marketing. Phép thử editor thật thực hiện ở phase 7 và lặp trên bản cài sạch ở phase 9.
 
 ## Acceptance criteria
 
@@ -102,7 +114,16 @@ File nghiên cứu ngầm định bảng volume pricing là tính năng chữ k�
 7. **Preset parity:** cài preset Bulkhead lên một store mới thì giao diện trùng khớp với demo store. Demo store không cài app nào, ngoài app review và app dịch miễn phí.
 8. **Accessibility thủ công:** đi được toàn bộ quick order, matrix, table view, filter drawer và cart chỉ bằng bàn phím. Focus luôn nhìn thấy được. Các thay đổi trong giỏ và lỗi theo dòng được thông báo qua `aria-live`. Chạy được trong in-app webview của Instagram, Facebook và Pinterest.
 9. **Dữ liệu demo:** script sinh lại được toàn bộ ≥ 500 sản phẩm, gồm variant, SKU, metafield và ảnh. Kết quả import được vào dev store. Đặt toàn bộ ảnh cạnh nhau trên một contact sheet thì thấy cùng nền, cùng góc máy, cùng ánh sáng và bóng đổ; ảnh lệch phong cách phải tạo lại.
-10. **Kết quả audit:** skill `shopify-theme-submission-audit` kết luận theme không giống Dawn hay Horizon. Hai skill `shopify-theme-a11y-review` và `shopify-theme-settings-review` không còn lỗi mức blocker.
+10. **Kết quả audit:** audit submission kết luận khác biệt thực chất với Dawn/Horizon; audit a11y và settings không còn blocker. Các tên skill trong plan gốc (`shopify-theme-submission-audit`, `shopify-theme-a11y-review`, `shopify-theme-settings-review`) không có trong catalog runtime đã kiểm tra; nếu lúc thực thi vẫn không có thì kiểm tra thủ công theo yêu cầu chính thức và ghi checklist/bằng chứng tương đương. Không tuyên bố đã chạy skill không tồn tại; không hạ yêu cầu kết luận audit vì thiếu công cụ.
+11. **Merchant tự xây trang:** trên feature test store, từ template sạch, người đóng vai merchant dựng đủ R01–R03 bằng core sections/blocks/settings, không code/Custom Liquid/app/page builder. Thử thêm/bỏ/reorder section và block, đổi ảnh/collection/CTA/FAQ, save và reload giữ kết quả. FAQ/CTA có cùng implementation trên các trang; không cần section riêng để hoàn thành một recipe. Phase 9 lặp trên bản cài preset sạch và ghi các bước + ảnh, không dùng mockup làm bằng chứng editor.
+12. **Design configurations và content resilience:** anh duyệt G0 cho D01–D05 ở 375/768/1440px; phase 7/9 chứng minh các cấu hình trên theme thật, bao gồm Browsing/Technical card, Grid/Table default, Simple/Multi-size PDP và guest/B2B. Stress title/SKU/heading dài, thiếu media/spec/download, số block thay đổi, collection rỗng và sold-out theo inventory; không document overflow/control đè nhau, Table/matrix cuộn có ngữ cảnh SKU/quantity/Add và keyboard access. Mọi core section được thử tại template hỗ trợ, không chỉ section xuất hiện trên demo homepage.
+
+## Dependencies và estimate sau revision
+
+[Plan index](../261021-0812-bulkhead-preset-v1/plan.md) là authority effort và thứ tự thực thi: 19.5 tuần công cho phase 0–9 + 2 tuần công dự phòng = 21.5w planning envelope, không phải ETA lịch. Phase 0/1 độc lập; sau cả hai, phase 2/8 chạy song song; baseline chờ cả import và ảnh cuối của phase 8 trước phase 4/5/6, không coi milestone import là hoàn thành dependency `[8]`. Optional O01/O02 không nằm trong estimate; điểm chờ store, approval và Theme Support có thể vượt reserve.
+
+Giữ nguyên ID và kết quả cốt lõi AC1–10, thêm AC11/12 cho scope mới. Mọi thay đổi sau này phải đồng bộ inventory, phase owner, QA và effort; không đưa optional vào preset/demo trước khi được duyệt.
+
 
 ## Rủi ro còn mở
 
